@@ -358,4 +358,148 @@
     </a>
 
     <div class="video-grid">
-      <div c
+      <div class="video-card">
+        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/56/114276707/608951f03342478d87809576c8f96e2/media.mp4"></video>
+        <div class="play-overlay">
+          <div class="play-button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/56/114276707/608951f03342478d87809576c8f96e2/media.mp4"></video>
+        <div class="play-overlay">
+          <div class="play-button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/56/114276707/608951f03342478d87809576c8f96e2/media.mp4"></video>
+        <div class="play-overlay">
+          <div class="play-button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/56/114276707/608951f03342478d87809576c8f96e2/media.mp4"></video>
+        <div class="play-overlay">
+          <div class="play-button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/56/114276707/608951f03342478d87809576c8f96e2/media.mp4"></video>
+        <div class="play-overlay">
+          <div class="play-button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/56/114276707/608951f03342478d87809576c8f96e2/media.mp4"></video>
+        <div class="play-overlay">
+          <div class="play-button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.video-card');
+    const locationText = document.getElementById('visitor-location');
+
+    cards.forEach((card) => {
+      const video = card.querySelector('video');
+
+      card.addEventListener('click', () => {
+        cards.forEach((otherCard) => {
+          const otherVideo = otherCard.querySelector('video');
+          if (otherVideo !== video) {
+            otherVideo.pause();
+            otherCard.classList.remove('playing');
+          }
+        });
+
+        if (video.paused) {
+          video.play();
+          card.classList.add('playing');
+        } else {
+          video.pause();
+          card.classList.remove('playing');
+        }
+      });
+
+      video.addEventListener('ended', () => {
+        card.classList.remove('playing');
+      });
+
+      video.addEventListener('pause', () => {
+        card.classList.remove('playing');
+      });
+
+      video.addEventListener('play', () => {
+        card.classList.add('playing');
+      });
+    });
+
+    async function loadVisitorLocation() {
+      async function tryIpApi() {
+        const response = await fetch('https://ipapi.co/json/');
+        if (!response.ok) throw new Error('ipapi failed');
+        const data = await response.json();
+        const city = data.city || '';
+        const region = data.region || data.country_name || '';
+        return [city, region].filter(Boolean).join(', ');
+      }
+
+      async function tryIpWhoIs() {
+        const response = await fetch('https://ipwho.is/');
+        if (!response.ok) throw new Error('ipwho.is failed');
+        const data = await response.json();
+        if (!data || !data.success) throw new Error('ipwho.is invalid');
+        const city = data.city || '';
+        const region = data.region || data.country || '';
+        return [city, region].filter(Boolean).join(', ');
+      }
+
+      try {
+        let location = '';
+
+        try {
+          location = await tryIpApi();
+        } catch (error) {
+          location = await tryIpWhoIs();
+        }
+
+        locationText.textContent = location || 'Nearby area';
+      } catch (error) {
+        locationText.textContent = 'Nearby area';
+      }
+    }
+
+    loadVisitorLocation();
+  </script>
+</body>
+</html>
