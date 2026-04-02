@@ -150,6 +150,24 @@
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
     }
 
+    .location-pill[hidden] {
+      display: none !important;
+    }
+
+    .location-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #2b2b2b;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    }
+
     .status-dot {
       width: 12px;
       height: 12px;
@@ -338,9 +356,9 @@
         <span class="status-dot"></span>
         <span>Online</span>
       </div>
-      <div class="location-pill">
+      <div class="location-pill" id="location-pill" hidden>
         <span class="pin-icon">📍</span>
-        <span id="visitor-location">Detecting location...</span>
+        <span id="visitor-location"></span>
       </div>
     </div>
 
@@ -429,6 +447,7 @@
   <script>
     const cards = document.querySelectorAll('.video-card');
     const locationText = document.getElementById('visitor-location');
+    const locationPill = document.getElementById('location-pill');
 
     cards.forEach((card) => {
       const video = card.querySelector('video');
@@ -493,9 +512,12 @@
           location = await tryIpWhoIs();
         }
 
-        locationText.textContent = location || 'Nearby area';
+        if (location) {
+          locationText.textContent = location;
+          locationPill.hidden = false;
+        }
       } catch (error) {
-        locationText.textContent = 'Nearby area';
+        locationPill.hidden = true;
       }
     }
 
