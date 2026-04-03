@@ -1,262 +1,281 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bio Link Landing Page</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Premium Bio Site</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body class="min-h-screen bg-[#eef1f4] text-slate-900">
+    <header class="sticky top-0 z-30 border-b border-black/5 bg-[#eef1f4]/90 backdrop-blur">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <div class="text-sm font-medium tracking-wide text-slate-700 sm:text-base">Premium Bio Site</div>
+        <nav class="hidden items-center gap-8 text-sm text-slate-600 md:flex">
+          <a href="#features" class="transition hover:text-slate-900">Features</a>
+          <a href="#tools" class="transition hover:text-slate-900">Tools</a>
+          <a href="#stats" class="transition hover:text-slate-900">Stats</a>
+          <a href="#footer" class="transition hover:text-slate-900">Contact</a>
+        </nav>
+        <button class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm md:hidden">☰</button>
+      </div>
+    </header>
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #24282b;
-      color: #ffffff;
-    }
+    <main>
+      <section class="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-20">
+        <div class="flex flex-col justify-center">
+          <div class="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+            <span class="tracking-[0.3em] text-amber-500">★★★★★</span>
+            Loved by 10k+ creators
+          </div>
+          <h1 class="max-w-xl text-4xl font-black leading-none tracking-tight sm:text-5xl lg:text-7xl">
+            Do everything with one platform.
+          </h1>
+          <p class="mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+            Build a clean bio link homepage, shorten links, track analytics, share digital cards, and manage campaigns from one polished dashboard.
+          </p>
 
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
+          <div class="mt-6 flex max-w-xl flex-wrap gap-x-5 gap-y-3 text-sm text-slate-600">
+            <div class="flex items-center gap-2"><span class="text-teal-500">✦</span><span>Short links</span></div>
+            <div class="flex items-center gap-2"><span class="text-teal-500">✦</span><span>Bio pages</span></div>
+            <div class="flex items-center gap-2"><span class="text-teal-500">✦</span><span>QR codes</span></div>
+            <div class="flex items-center gap-2"><span class="text-teal-500">✦</span><span>Share VCards</span></div>
+            <div class="flex items-center gap-2"><span class="text-teal-500">✦</span><span>Transfer files</span></div>
+            <div class="flex items-center gap-2"><span class="text-teal-500">✦</span><span>Host HTML files</span></div>
+          </div>
 
-    .page {
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding: 16px;
-    }
-
-    .top-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 50px;
-      background: #e60f64;
-      color: #ffffff;
-      border-radius: 999px;
-      font-size: 20px;
-      font-weight: 500;
-      margin-bottom: 18px;
-      padding: 12px 20px;
-    }
-
-    .more-button {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      width: 100%;
-      background: #e9e9e9;
-      color: #111111;
-      border-radius: 999px;
-      padding: 10px 14px;
-      margin-bottom: 18px;
-    }
-
-    .icon-wrap {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      border-radius: 50%;
-      background: #000000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .more-text {
-      flex: 1;
-      text-align: center;
-      font-size: 16px;
-      font-weight: 500;
-      padding-right: 40px;
-    }
-
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .video-card {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 9 / 16;
-      border-radius: 24px;
-      overflow: hidden;
-      background: #111111;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    }
-
-    .video-card video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      background: #000000;
-    }
-
-    .play-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0.05));
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-    }
-
-    .video-card.playing .play-overlay {
-      opacity: 0;
-    }
-
-    .play-button {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-
-    .play-button svg {
-      width: 22px;
-      height: 22px;
-      margin-left: 3px;
-      fill: #111111;
-    }
-
-    @media (max-width: 380px) {
-      .page {
-        padding: 12px;
-      }
-
-      .video-grid {
-        gap: 10px;
-      }
-
-      .top-button {
-        font-size: 18px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="page">
-    <a href="#" class="top-button">Click Here</a>
-
-    <a href="#" class="more-button">
-      <span class="icon-wrap">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="3" y="3" width="18" height="18" rx="5" stroke="white" stroke-width="2"/>
-          <circle cx="12" cy="12" r="4" stroke="white" stroke-width="2"/>
-          <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
-        </svg>
-      </span>
-      <span class="more-text">More Videos</span>
-    </a>
-
-    <div class="video-grid">
-      <div class="video-card">
-        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/56/114276707/608951f03342478d87809576c8f96e23/media.mp4"></video>
-        <div class="play-overlay">
-          <div class="play-button">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"/>
-            </svg>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#demo" class="rounded-2xl bg-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition hover:-translate-y-0.5">
+              BIO PAGE DEMO ↗
+            </a>
+            <a href="#features" class="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
+              Explore features
+            </a>
           </div>
         </div>
-      </div>
 
-      <div class="video-card">
-        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/48/114276707/703bac275a234708b7da1fc89b59d72a/media.mp4"></video>
-        <div class="play-overlay">
-          <div class="play-button">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"/>
-            </svg>
+        <div id="demo" class="relative flex items-center justify-center">
+          <div class="absolute -left-4 top-12 h-24 w-24 rounded-full bg-teal-200/60 blur-3xl"></div>
+          <div class="absolute -right-2 bottom-16 h-32 w-32 rounded-full bg-fuchsia-200/60 blur-3xl"></div>
+          <div class="grid w-full max-w-xl grid-cols-[1.15fr_0.85fr] items-end gap-4 rounded-[34px] bg-white p-4 shadow-[0_20px_80px_rgba(15,23,42,0.08)] ring-1 ring-black/5 sm:p-6">
+            <div class="rounded-[28px] border border-slate-100 bg-slate-50 p-4">
+              <div class="mb-4 flex items-center justify-between text-xs text-slate-400">
+                <span>Overview</span>
+                <span class="rounded-full bg-teal-100 px-2 py-1 text-teal-700">Live</span>
+              </div>
+              <div class="mb-4 grid grid-cols-3 gap-2">
+                <div class="rounded-2xl bg-white p-3 ring-1 ring-slate-100"><div class="h-2 w-10 rounded-full bg-slate-200"></div><div class="mt-2 h-6 w-16 rounded-full bg-slate-100"></div></div>
+                <div class="rounded-2xl bg-white p-3 ring-1 ring-slate-100"><div class="h-2 w-10 rounded-full bg-slate-200"></div><div class="mt-2 h-6 w-16 rounded-full bg-slate-100"></div></div>
+                <div class="rounded-2xl bg-white p-3 ring-1 ring-slate-100"><div class="h-2 w-10 rounded-full bg-slate-200"></div><div class="mt-2 h-6 w-16 rounded-full bg-slate-100"></div></div>
+              </div>
+              <div class="rounded-[24px] bg-white p-4 ring-1 ring-slate-100">
+                <div class="mb-3 flex items-center justify-between">
+                  <div>
+                    <div class="h-2 w-14 rounded-full bg-slate-200"></div>
+                    <div class="mt-2 h-3 w-24 rounded-full bg-slate-100"></div>
+                  </div>
+                  <div class="rounded-xl bg-slate-100 px-3 py-1 text-xs text-slate-500">Weekly</div>
+                </div>
+                <div class="relative h-32 overflow-hidden rounded-2xl bg-slate-50">
+                  <svg viewBox="0 0 300 120" class="h-full w-full">
+                    <path d="M0 90 C 30 70, 50 100, 80 78 S 130 45, 160 68 S 220 115, 300 52" fill="none" stroke="#67e8f9" stroke-width="4" stroke-linecap="round"></path>
+                    <defs>
+                      <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#67e8f9"></stop>
+                        <stop offset="100%" stop-color="#67e8f9" stop-opacity="0"></stop>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="mx-auto w-full max-w-[220px] rounded-[34px] bg-gradient-to-b from-[#161225] via-[#291744] to-[#0e1420] p-3 shadow-2xl">
+              <div class="rounded-[28px] bg-gradient-to-b from-fuchsia-500 via-violet-500 to-sky-500 p-[1px]">
+                <div class="rounded-[27px] bg-[#170d24] p-4 text-white">
+                  <div class="mb-4 flex justify-between text-[10px] text-white/60">
+                    <span>9:41</span>
+                    <span>⚡︎ ◔</span>
+                  </div>
+                  <div class="mb-4 rounded-[22px] bg-white/10 p-4 text-center backdrop-blur">
+                    <div class="mx-auto mb-3 h-16 w-16 rounded-full bg-white/20"></div>
+                    <div class="text-lg font-semibold">Ava</div>
+                    <div class="text-xs text-white/70">Creator & designer</div>
+                  </div>
+                  <div class="space-y-2">
+                    <div class="rounded-2xl bg-white/12 px-4 py-3 text-sm backdrop-blur">Link item 1</div>
+                    <div class="rounded-2xl bg-white/12 px-4 py-3 text-sm backdrop-blur">Link item 2</div>
+                    <div class="rounded-2xl bg-white/12 px-4 py-3 text-sm backdrop-blur">Link item 3</div>
+                    <div class="rounded-2xl bg-white/12 px-4 py-3 text-sm backdrop-blur">Link item 4</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="video-card">
-        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/40/114276707/ab3b9818cdfb42a68ce25b33f276de39/media.mp4"></video>
-        <div class="play-overlay">
-          <div class="play-button">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"/>
-            </svg>
+      <section id="features" class="mx-auto max-w-6xl space-y-16 px-4 py-8 sm:px-6 lg:px-8 lg:py-16">
+        <div class="grid items-center gap-8 lg:grid-cols-2">
+          <div class="rounded-[28px] bg-white p-4 shadow-sm ring-1 ring-black/5">
+            <div class="rounded-[22px] border border-slate-100 bg-slate-50 p-3">
+              <div class="mb-3 flex items-center justify-between">
+                <div>
+                  <div class="text-xs text-slate-400">my.website</div>
+                  <div class="text-sm font-semibold text-slate-800">myurl</div>
+                </div>
+                <div class="h-8 w-8 rounded-full bg-teal-100"></div>
+              </div>
+              <div class="space-y-2">
+                <div class="h-3 w-24 rounded-full bg-slate-200"></div>
+                <div class="h-10 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+                <div class="h-10 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+                <div class="h-10 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-100 text-xl text-teal-700">✦</div>
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Bio link pages</h2>
+            <p class="mt-4 max-w-xl text-base leading-7 text-slate-600">Create your own unique and highly customizable bio link page with ease.</p>
+            <div class="mt-6 space-y-3">
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Custom colors & branding</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Tons of ready-to-use components</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>SEO settings</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Password protection, sensitive content warning</span></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="video-card">
-        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/40/114276707/ab3b9818cdfb42a68ce25b33f276de39/media.mp4"></video>
-        <div class="play-overlay">
-          <div class="play-button">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"/>
-            </svg>
+        <div class="grid items-center gap-8 lg:grid-cols-2">
+          <div class="lg:order-2 rounded-[28px] bg-white p-4 shadow-sm ring-1 ring-black/5">
+            <div class="grid gap-2 rounded-[22px] border border-slate-100 bg-slate-50 p-3">
+              <div class="h-4 w-32 rounded-full bg-slate-200"></div>
+              <div class="h-10 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="h-9 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+                <div class="h-9 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+              </div>
+              <div class="h-10 rounded-2xl bg-teal-50"></div>
+            </div>
+          </div>
+          <div class="lg:order-1">
+            <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-100 text-xl text-teal-700">🔗</div>
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Shortened links</h2>
+            <p class="mt-4 max-w-xl text-base leading-7 text-slate-600">Yes. You can use our service as a shortener as well.</p>
+            <div class="mt-6 space-y-3">
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Scheduling & expiration limits</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Country, device & language targeting</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>A/B rotation</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Password protection, sensitive content warning</span></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="video-card">
-        <video playsinline preload="metadata" src="https://media.icfcdn.com/01ce20/40/114276707/ab3b9818cdfb42a68ce25b33f276de39/media.mp4"></video>
-        <div class="play-overlay">
-          <div class="play-button">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 5.14v13.72c0 .8.87 1.3 1.57.9l10.29-5.86a1.03 1.03 0 0 0 0-1.8L9.57 4.24A1.03 1.03 0 0 0 8 5.14z"/>
-            </svg>
+        <div class="grid items-center gap-8 lg:grid-cols-2">
+          <div class="rounded-[28px] bg-white p-4 shadow-sm ring-1 ring-black/5">
+            <div class="rounded-[22px] border border-slate-100 bg-slate-50 p-3">
+              <div class="mb-3 grid grid-cols-4 gap-2">
+                <div class="h-10 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+                <div class="h-10 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+                <div class="h-10 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+                <div class="h-10 rounded-2xl bg-white ring-1 ring-slate-100"></div>
+              </div>
+              <div class="relative h-40 rounded-2xl bg-white p-3 ring-1 ring-slate-100">
+                <div class="absolute inset-x-3 bottom-3 top-3 flex items-end gap-2">
+                  <div class="h-[40%] flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 to-teal-200"></div>
+                  <div class="h-[68%] flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 to-teal-200"></div>
+                  <div class="h-[35%] flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 to-teal-200"></div>
+                  <div class="h-[80%] flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 to-teal-200"></div>
+                  <div class="h-[55%] flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 to-teal-200"></div>
+                  <div class="h-[48%] flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 to-teal-200"></div>
+                  <div class="h-[62%] flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 to-teal-200"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-100 text-xl text-teal-700">▤</div>
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Built-in analytics</h2>
+            <p class="mt-4 max-w-xl text-base leading-7 text-slate-600">Easy to understand, yet detailed and comprehensive analytics for all your links, GDPR, CCPA and PECR compliant.</p>
+            <div class="mt-6 space-y-3">
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Countries & cities</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Referrers & UTMs</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Devices & operating systems</span></div>
+              <div class="flex items-start gap-3 text-slate-700"><span class="mt-1 text-green-500">●</span><span>Browsers, languages</span></div>
+            </div>
           </div>
         </div>
+      </section>
+
+      <section id="tools" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-16">
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="rounded-[28px] bg-gradient-to-br from-indigo-100 to-slate-100 p-6 shadow-sm ring-1 ring-black/5">
+            <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/70 text-xl shadow-sm">🛠️</div>
+            <h3 class="text-xl font-semibold">Tools</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">We got a few systems and utilities that make the product more useful day to day.</p>
+          </div>
+          <div class="rounded-[28px] bg-gradient-to-br from-fuchsia-100 to-rose-100 p-6 shadow-sm ring-1 ring-black/5">
+            <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/70 text-xl shadow-sm">⊕</div>
+            <h3 class="text-xl font-semibold">Custom domains</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Connect your own domain or use our predefined ones.</p>
+          </div>
+          <div class="rounded-[28px] bg-gradient-to-br from-violet-100 to-pink-100 p-6 shadow-sm ring-1 ring-black/5">
+            <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/70 text-xl shadow-sm">⎘</div>
+            <h3 class="text-xl font-semibold">Projects</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Easily categorize your managed resources.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="stats" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-16">
+        <div class="rounded-[32px] bg-[#161a22] px-6 py-10 text-center text-white shadow-xl sm:px-10">
+          <div class="mx-auto grid max-w-3xl gap-8 sm:grid-cols-2">
+            <div class="rounded-[24px] border border-white/10 bg-white/5 px-6 py-8">
+              <div class="text-sm text-white/60">Links</div>
+              <div class="mt-3 text-4xl font-bold tracking-tight text-fuchsia-400">41+</div>
+            </div>
+            <div class="rounded-[24px] border border-white/10 bg-white/5 px-6 py-8">
+              <div class="text-sm text-white/60">Tracked pageviews</div>
+              <div class="mt-3 text-4xl font-bold tracking-tight text-sky-400">2,804,027+</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-4xl px-4 py-8 text-center sm:px-6 lg:px-8 lg:py-16">
+        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Tracking pixels</h2>
+        <p class="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600">
+          All the links easily integrate with major marketing and analytics providers.
+        </p>
+        <div class="mt-8 grid grid-cols-3 gap-4 sm:grid-cols-5">
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">f</div>
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">G</div>
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">g</div>
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">in</div>
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">p</div>
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">x</div>
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">Q</div>
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">♪</div>
+          <div class="flex h-16 items-center justify-center rounded-2xl bg-white text-lg font-semibold shadow-sm ring-1 ring-black/5">◔</div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="footer" class="border-t border-black/5 bg-white/50">
+      <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-slate-500 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
+        <div>
+          <div class="font-medium text-slate-700">Premium Bio Site</div>
+          <div>Copyright © 2026 Premium Bio Site</div>
+        </div>
+        <div class="flex gap-5">
+          <a href="#" class="hover:text-slate-800">Privacy</a>
+          <a href="#" class="hover:text-slate-800">Terms</a>
+          <a href="#" class="hover:text-slate-800">Contact</a>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <script>
-    const cards = document.querySelectorAll('.video-card');
-
-    cards.forEach((card) => {
-      const video = card.querySelector('video');
-
-      card.addEventListener('click', () => {
-        cards.forEach((otherCard) => {
-          const otherVideo = otherCard.querySelector('video');
-          if (otherVideo !== video) {
-            otherVideo.pause();
-            otherCard.classList.remove('playing');
-          }
-        });
-
-        if (video.paused) {
-          video.play();
-          card.classList.add('playing');
-        } else {
-          video.pause();
-          card.classList.remove('playing');
-        }
-      });
-
-      video.addEventListener('ended', () => {
-        card.classList.remove('playing');
-      });
-
-      video.addEventListener('pause', () => {
-        card.classList.remove('playing');
-      });
-
-      video.addEventListener('play', () => {
-        card.classList.add('playing');
-      });
-    });
-  </script>
-</body>
+    </footer>
+  </body>
 </html>
