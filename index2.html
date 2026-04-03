@@ -350,21 +350,55 @@ if(localStorage.getItem('accepted')){
 }
 
 async function loadLocation(){
-  try{
-    let res=await fetch('https://ipapi.co/json/');
-    let d=await res.json();
-    let loc=d.city+", "+d.region;
-    document.getElementById('loc').textContent=loc;
-    document.getElementById('location-pill').hidden=false;
-  }catch{
-    try{
-      let res=await fetch('https://ipwho.is/');
-      let d=await res.json();
-      let loc=d.city+", "+d.region;
-      document.getElementById('loc').textContent=loc;
-      document.getElementById('location-pill').hidden=false;
-    }catch{}
+  const pill = document.getElementById('location-pill');
+  const text = document.getElementById('loc');
+
+  function formatLocation(city, region, country){
+    const clean = [city, region, country]
+      .map(v => (typeof v === 'string' ? v.trim() : ''))
+      .filter(v => v && v.toLowerCase() !== 'undefined' && v.toLowerCase() !== 'null');
+
+    if (clean.length >= 2) return clean.slice(0, 2).join(', ');
+    if (clean.length === 1) return clean[0];
+    return '';
   }
+
+  async function tryIpApi(){
+    const res = await fetch('https://ipapi.co/json/', { cache: 'no-store' });
+    if (!res.ok) throw new Error('ipapi failed');
+    const d = await res.json();
+    return formatLocation(d.city, d.region, d.country_name);
+  }
+
+  async function tryIpWho(){
+    const res = await fetch('https://ipwho.is/', { cache: 'no-store' });
+    if (!res.ok) throw new Error('ipwho failed');
+    const d = await res.json();
+    if (!d || d.success === false) throw new Error('ipwho invalid');
+    return formatLocation(d.city, d.region, d.country);
+  }
+
+  async function tryIpInfo(){
+    const res = await fetch('https://ipinfo.io/json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('ipinfo failed');
+    const d = await res.json();
+    return formatLocation(d.city, d.region, d.country);
+  }
+
+  const providers = [tryIpApi, tryIpWho, tryIpInfo];
+
+  for (const provider of providers) {
+    try {
+      const loc = await provider();
+      if (loc) {
+        text.textContent = loc;
+        pill.hidden = false;
+        return;
+      }
+    } catch (e) {}
+  }
+
+  pill.hidden = true;
 }
 
 loadLocation();
