@@ -6,12 +6,11 @@
   <title>Video Player Generator</title>
 
   <!-- =========================
-       TEMPAT IKLAN 1: HEAD SCRIPT ADS
-       Ganti blok ini dengan script iklan kamu sendiri.
-       Cocok untuk script global / popunder / network loader.
+       IKLAN 1: HEAD / GLOBAL ADS SCRIPT
+       Ganti blok ini dengan script iklan kamu sendiri
        ========================= -->
   <!--
-  <script async src="https://ad-network-kamu.com/script.js"></script>
+  <script async src="https://iklan-kamu.com/script.js"></script>
   -->
 
   <link
@@ -41,7 +40,7 @@
     }
 
     .wrap {
-      max-width: 900px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 24px 16px 40px;
     }
@@ -52,14 +51,6 @@
       border-radius: 16px;
       padding: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-
-    .artplayer-app {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
     }
 
     .hidden {
@@ -80,11 +71,12 @@
       text-align: center;
       padding: 12px;
       box-sizing: border-box;
+      background: rgba(255,255,255,0.02);
     }
 
     .quality-row {
       display: grid;
-      grid-template-columns: 1fr 2fr auto auto;
+      grid-template-columns: 1fr auto auto;
       gap: 8px;
       margin-bottom: 10px;
     }
@@ -98,7 +90,32 @@
       min-height: 110px;
     }
 
-    @media (max-width: 640px) {
+    /* PLAYER AREA */
+    .artplayer-app {
+      width: 100%;
+      height: min(72vh, 900px);
+      min-height: 280px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .art-video-player {
+      background: #000 !important;
+    }
+
+    .art-video-player video {
+      object-fit: contain !important;
+      background: #000 !important;
+    }
+
+    @media (max-width: 768px) {
+      .artplayer-app {
+        height: 70vh;
+        min-height: 260px;
+        aspect-ratio: auto !important;
+      }
+
       .quality-row {
         grid-template-columns: 1fr;
       }
@@ -135,7 +152,7 @@
         </div>
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="sourceMode" id="modeMulti" value="multi" />
-          <label class="form-check-label" for="modeMulti">Multi Quality</label>
+          <label class="form-check-label" for="modeMulti">Multi Video</label>
         </div>
       </div>
 
@@ -145,10 +162,12 @@
       </div>
 
       <div id="multiInput" class="hidden mb-3">
-        <label class="form-label">Daftar Quality</label>
+        <label class="form-label">Daftar Video / Source</label>
         <div id="qualityList"></div>
-        <button id="addQualityBtn" class="btn btn-outline-light btn-sm" type="button">+ Tambah Quality</button>
-        <div class="note mt-2">Contoh: 360p, 480p, 720p. Pilih salah satu sebagai default.</div>
+        <button id="addQualityBtn" class="btn btn-outline-light btn-sm" type="button">+ Tambah Video</button>
+        <div class="note mt-2">
+          Cukup isi URL video saja. Tidak perlu isi 720p / 1080p manual.
+        </div>
       </div>
 
       <div class="d-grid gap-2">
@@ -168,8 +187,8 @@
     <!-- PLAYER -->
     <div id="playerMode" class="hidden">
       <!-- =========================
-           TEMPAT IKLAN 2: BANNER ATAS PLAYER
-           Ganti isi div ini dengan banner/script iklan kamu.
+           IKLAN 2: BANNER ATAS PLAYER
+           Ganti isi div ini dengan kode iklan kamu
            ========================= -->
       <div class="ad-slot" id="adTop">
         SLOT IKLAN ATAS PLAYER
@@ -180,8 +199,8 @@
       </div>
 
       <!-- =========================
-           TEMPAT IKLAN 3: BANNER BAWAH PLAYER
-           Ganti isi div ini dengan banner/script iklan kamu.
+           IKLAN 3: BANNER BAWAH PLAYER
+           Ganti isi div ini dengan kode iklan kamu
            ========================= -->
       <div class="ad-slot" id="adBottom">
         SLOT IKLAN BAWAH PLAYER
@@ -191,8 +210,7 @@
 
   <template id="qualityRowTemplate">
     <div class="quality-row">
-      <input class="form-control q-label" placeholder="720p" />
-      <input class="form-control q-url" placeholder="https://cdn-kamu.com/720.m3u8" />
+      <input class="form-control q-url" placeholder="https://cdn-kamu.com/video.m3u8" />
       <div class="form-check d-flex align-items-center">
         <input class="form-check-input q-default" type="radio" name="q-default" />
         <label class="form-check-label ms-2">Default</label>
@@ -232,14 +250,13 @@
       qs('#multiInput').classList.toggle('hidden', mode !== 'multi');
     }
 
-    function addQualityRow(label = '', url = '', checked = false) {
+    function addQualityRow(url = '', checked = false) {
       const tpl = qs('#qualityRowTemplate');
       const node = tpl.content.cloneNode(true);
       const wrap = document.createElement('div');
       wrap.appendChild(node);
 
       const row = wrap.firstElementChild;
-      row.querySelector('.q-label').value = label;
       row.querySelector('.q-url').value = url;
       row.querySelector('.q-default').checked = checked;
 
@@ -266,14 +283,13 @@
         const rows = qsa('#qualityList .quality-row');
         const list = [];
 
-        rows.forEach((row) => {
-          const label = row.querySelector('.q-label').value.trim();
+        rows.forEach((row, index) => {
           const url = row.querySelector('.q-url').value.trim();
           const isDefault = row.querySelector('.q-default').checked;
 
-          if (label && url) {
+          if (url) {
             list.push({
-              quality: label,
+              label: `Video ${index + 1}`,
               url,
               default: isDefault
             });
@@ -281,8 +297,12 @@
         });
 
         if (list.length < 1) {
-          alert('Minimal isi 1 quality.');
+          alert('Minimal isi 1 video.');
           return;
+        }
+
+        if (!list.some(item => item.default)) {
+          list[0].default = true;
         }
 
         payload = JSON.stringify(list);
@@ -305,6 +325,137 @@
       location.href = url;
     }
 
+    function getArtType(type) {
+      if (type === 'hls') return 'm3u8';
+      if (type === 'dash') return 'mpd';
+      if (type === 'flv') return 'flv';
+      if (type === 'mpegts') return 'mpegts';
+      return 'mp4';
+    }
+
+    function destroyCurrentEngines(art) {
+      if (art._hls) {
+        art._hls.destroy();
+        art._hls = null;
+      }
+
+      if (art._dash) {
+        art._dash.reset();
+        art._dash = null;
+      }
+
+      if (art._flv) {
+        art._flv.destroy();
+        art._flv = null;
+      }
+
+      if (art._mpegts) {
+        art._mpegts.destroy();
+        art._mpegts = null;
+      }
+    }
+
+    function applySourceByType(art, type, url) {
+      destroyCurrentEngines(art);
+
+      const video = art.template.$video;
+
+      if (type === 'hls') {
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(video);
+          art._hls = hls;
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = url;
+        } else {
+          alert('Browser tidak mendukung HLS.');
+        }
+        return;
+      }
+
+      if (type === 'dash') {
+        const dash = dashjs.MediaPlayer().create();
+        dash.initialize(video, url, false);
+        art._dash = dash;
+        return;
+      }
+
+      if (type === 'flv') {
+        if (flvjs.isSupported()) {
+          const flv = flvjs.createPlayer({ type: 'flv', url });
+          flv.attachMediaElement(video);
+          flv.load();
+          art._flv = flv;
+        } else {
+          alert('Browser tidak mendukung FLV.');
+        }
+        return;
+      }
+
+      if (type === 'mpegts') {
+        if (window.mpegts) {
+          const ts = mpegts.createPlayer({ type: 'mpegts', url });
+          ts.attachMediaElement(video);
+          ts.load();
+          art._mpegts = ts;
+        } else {
+          alert('Browser tidak mendukung MPEGTS.');
+        }
+        return;
+      }
+
+      video.src = url;
+    }
+
+    function updateResolutionLabels(art, sourceList, activeUrl) {
+      const video = art.template.$video;
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+
+      if (!w || !h || !sourceList?.length) return;
+
+      const activeIndex = sourceList.findIndex(item => item.url === activeUrl);
+      if (activeIndex === -1) return;
+
+      sourceList[activeIndex].label = `${w}x${h}`;
+      buildSourceSetting(art, sourceList, activeUrl);
+    }
+
+    function buildSourceSetting(art, sourceList, activeUrl) {
+      if (!sourceList || sourceList.length <= 1) return;
+
+      const settingItems = sourceList.map(item => ({
+        html: item.label,
+        tooltip: item.url === activeUrl ? 'Aktif' : '',
+        switch: item.url === activeUrl,
+        click: () => {
+          applySourceByType(art, art._sourceType, item.url);
+          art.notice.show = `Berpindah ke ${item.label}`;
+
+          setTimeout(() => {
+            try {
+              art.play();
+            } catch (e) {}
+          }, 200);
+
+          buildSourceSetting(art, sourceList, item.url);
+
+          const video = art.template.$video;
+          video.onloadedmetadata = () => {
+            updateResolutionLabels(art, sourceList, item.url);
+          };
+        }
+      }));
+
+      art.setting.update({
+        name: 'source-switcher',
+        html: 'Video',
+        tooltip: sourceList.find(item => item.url === activeUrl)?.label || 'Pilih',
+        selector: settingItems
+      });
+    }
+
     function setupPlayer() {
       const params = new URLSearchParams(location.search);
       const type = params.get('t');
@@ -325,17 +476,19 @@
         return;
       }
 
-      let finalSource = decodedPayload;
-      let qualityList = null;
+      let sourceList = [];
+      let finalSource = '';
 
       try {
         const parsed = JSON.parse(decodedPayload);
         if (Array.isArray(parsed)) {
-          qualityList = parsed;
+          sourceList = parsed;
           finalSource = parsed.find(x => x.default)?.url || parsed[0]?.url || '';
+        } else {
+          finalSource = decodedPayload;
         }
       } catch (err) {
-        // payload bukan JSON, berarti single source biasa
+        finalSource = decodedPayload;
       }
 
       if (!finalSource) {
@@ -346,32 +499,25 @@
       const option = {
         container: '.artplayer-app',
         url: finalSource,
+        type: getArtType(type),
         autoplay: false,
         fullscreen: true,
         fullscreenWeb: true,
-        autoSize: true,
+        autoSize: false,
         setting: true,
-        controls: [
+        pip: true,
+        mutex: true,
+        customType: {},
+        contextmenu: [
           {
-            position: 'right',
             html: 'Reload',
             click: () => location.reload()
           }
-        ],
-        customType: {}
+        ]
       };
 
-      if (qualityList && Array.isArray(qualityList) && qualityList.length > 0) {
-        option.quality = qualityList.map(item => ({
-          default: !!item.default,
-          html: item.quality,
-          url: item.url
-        }));
-      }
-
       if (type === 'hls') {
-        option.type = 'm3u8';
-        option.customType.m3u8 = function (video, url) {
+        option.customType.m3u8 = function(video, url) {
           if (Hls.isSupported()) {
             const hls = new Hls();
             hls.loadSource(url);
@@ -385,15 +531,13 @@
       }
 
       if (type === 'dash') {
-        option.type = 'mpd';
-        option.customType.mpd = function (video, url) {
+        option.customType.mpd = function(video, url) {
           dashjs.MediaPlayer().create().initialize(video, url, false);
         };
       }
 
       if (type === 'flv') {
-        option.type = 'flv';
-        option.customType.flv = function (video, url) {
+        option.customType.flv = function(video, url) {
           if (flvjs.isSupported()) {
             const player = flvjs.createPlayer({ type: 'flv', url });
             player.attachMediaElement(video);
@@ -405,35 +549,43 @@
       }
 
       if (type === 'mpegts') {
-        option.type = 'mpegts';
-        option.customType.mpegts = function (video, url) {
-          if (window.mpegts && mpegts.getFeatureList().mseLivePlayback) {
+        option.customType.mpegts = function(video, url) {
+          if (window.mpegts) {
             const player = mpegts.createPlayer({ type: 'mpegts', url });
             player.attachMediaElement(video);
             player.load();
           } else {
-            alert('Browser tidak mendukung MPEG-TS.');
+            alert('Browser tidak mendukung MPEGTS.');
           }
         };
       }
 
-      if (type === 'mp4') {
-        option.type = 'mp4';
-      }
-
       const art = new Artplayer(option);
+      art._sourceType = type;
+
+      art.on('ready', () => {
+        const video = art.template.$video;
+
+        if (sourceList.length > 1) {
+          buildSourceSetting(art, sourceList, finalSource);
+        }
+
+        video.onloadedmetadata = () => {
+          updateResolutionLabels(art, sourceList, finalSource);
+        };
+      });
 
       /* =========================
-         TEMPAT IKLAN 4: HOOK IKLAN SAAT PLAY / KLIK
-         Di sini kamu bisa panggil fungsi/script popup iklan milikmu.
-         Jangan auto window.open tanpa user interaction, biasanya diblok browser.
-
-         Contoh:
-         art.on('play', () => {
-           // triggerAdPopup();
-         });
+         IKLAN 4: HOOK IKLAN SAAT PLAY
+         Tempat paling aman untuk trigger popup/ad script
+         Ganti isi di bawah dengan punyamu sendiri
          ========================= */
+      let adTriggered = false;
       art.on('play', () => {
+        if (adTriggered) return;
+        adTriggered = true;
+
+        // contoh:
         // triggerAdPopup();
       });
     }
