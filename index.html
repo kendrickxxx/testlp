@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video Player Generator</title>
+
+  <!-- =========================
+       TEMPAT IKLAN 1: HEAD SCRIPT ADS
+       Ganti blok ini dengan script iklan kamu sendiri.
+       Cocok untuk script global / popunder / network loader.
+       ========================= -->
+  <!--
+  <script async src="https://ad-network-kamu.com/script.js"></script>
+  -->
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mpegts.js/dist/mpegts.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #020617;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --border: #334155;
+      --primary: #2563eb;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .card-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    .artplayer-app {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .ad-slot {
+      width: 100%;
+      max-width: 728px;
+      min-height: 90px;
+      margin: 16px auto;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+
+    .quality-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr auto auto;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 110px;
+    }
+
+    @media (max-width: 640px) {
+      .quality-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- GENERATOR -->
+    <div id="generator" class="card-box">
+      <h3 class="mb-3">🎬 Video Player Generator</h3>
+
+      <div class="mb-3">
+        <label class="form-label">Base URL</label>
+        <input id="baseUrl" class="form-control" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Format Video</label>
+        <select id="playType" class="form-select">
+          <option value="mp4">MP4</option>
+          <option value="hls">HLS (.m3u8)</option>
+          <option value="dash">DASH (.mpd)</option>
+          <option value="flv">FLV (.flv)</option>
+          <option value="mpegts">MPEG-TS (.ts)</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label d-block">Mode Source</label>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="sourceMode" id="modeSingle" value="single" checked />
+          <label class="form-check-label" for="modeSingle">Single</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="sourceMode" id="modeMulti" value="multi" />
+          <label class="form-check-label" for="modeMulti">Multi Quality</label>
+        </div>
+      </div>
+
+      <div id="singleInput" class="mb-3">
+        <label class="form-label">Link Video</label>
+        <input id="singleUrl" class="form-control" placeholder="https://cdn-kamu.com/video.m3u8" />
+      </div>
+
+      <div id="multiInput" class="hidden mb-3">
+        <label class="form-label">Daftar Quality</label>
+        <div id="qualityList"></div>
+        <button id="addQualityBtn" class="btn btn-outline-light btn-sm" type="button">+ Tambah Quality</button>
+        <div class="note mt-2">Contoh: 360p, 480p, 720p. Pilih salah satu sebagai default.</div>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button id="generateBtn" class="btn btn-primary" type="button">Generate Link</button>
+      </div>
+
+      <div id="resultArea" class="hidden mt-4">
+        <label class="form-label">Hasil Link</label>
+        <textarea id="finalUrl" class="form-control" readonly></textarea>
+        <div class="d-flex gap-2 mt-2 flex-wrap">
+          <button id="copyBtn" class="btn btn-success" type="button">Copy</button>
+          <button id="openBtn" class="btn btn-warning" type="button">Buka Player</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAYER -->
+    <div id="playerMode" class="hidden">
+      <!-- =========================
+           TEMPAT IKLAN 2: BANNER ATAS PLAYER
+           Ganti isi div ini dengan banner/script iklan kamu.
+           ========================= -->
+      <div class="ad-slot" id="adTop">
+        SLOT IKLAN ATAS PLAYER
+      </div>
+
+      <div class="card-box">
+        <div class="artplayer-app"></div>
+      </div>
+
+      <!-- =========================
+           TEMPAT IKLAN 3: BANNER BAWAH PLAYER
+           Ganti isi div ini dengan banner/script iklan kamu.
+           ========================= -->
+      <div class="ad-slot" id="adBottom">
+        SLOT IKLAN BAWAH PLAYER
+      </div>
+    </div>
+  </div>
+
+  <template id="qualityRowTemplate">
+    <div class="quality-row">
+      <input class="form-control q-label" placeholder="720p" />
+      <input class="form-control q-url" placeholder="https://cdn-kamu.com/720.m3u8" />
+      <div class="form-check d-flex align-items-center">
+        <input class="form-check-input q-default" type="radio" name="q-default" />
+        <label class="form-check-label ms-2">Default</label>
+      </div>
+      <button class="btn btn-danger btn-sm remove-row" type="button">Hapus</button>
+    </div>
+  </template>
+
+  <script>
+    function enc(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function dec(str) {
+      return decodeURIComponent(escape(atob(str)));
+    }
+
+    function qs(sel) {
+      return document.querySelector(sel);
+    }
+
+    function qsa(sel) {
+      return Array.from(document.querySelectorAll(sel));
+    }
+
+    function getBaseUrl() {
+      return location.origin + location.pathname;
+    }
+
+    function getSelectedSourceMode() {
+      return qs('input[name="sourceMode"]:checked').value;
+    }
+
+    function toggleInputs() {
+      const mode = getSelectedSourceMode();
+      qs('#singleInput').classList.toggle('hidden', mode !== 'single');
+      qs('#multiInput').classList.toggle('hidden', mode !== 'multi');
+    }
+
+    function addQualityRow(label = '', url = '', checked = false) {
+      const tpl = qs('#qualityRowTemplate');
+      const node = tpl.content.cloneNode(true);
+      const wrap = document.createElement('div');
+      wrap.appendChild(node);
+
+      const row = wrap.firstElementChild;
+      row.querySelector('.q-label').value = label;
+      row.querySelector('.q-url').value = url;
+      row.querySelector('.q-default').checked = checked;
+
+      row.querySelector('.remove-row').addEventListener('click', () => {
+        row.remove();
+      });
+
+      qs('#qualityList').appendChild(row);
+    }
+
+    function generateLink() {
+      const type = qs('#playType').value;
+      const mode = getSelectedSourceMode();
+      let payload = '';
+
+      if (mode === 'single') {
+        const singleUrl = qs('#singleUrl').value.trim();
+        if (!singleUrl) {
+          alert('Masukkan link video.');
+          return;
+        }
+        payload = singleUrl;
+      } else {
+        const rows = qsa('#qualityList .quality-row');
+        const list = [];
+
+        rows.forEach((row) => {
+          const label = row.querySelector('.q-label').value.trim();
+          const url = row.querySelector('.q-url').value.trim();
+          const isDefault = row.querySelector('.q-default').checked;
+
+          if (label && url) {
+            list.push({
+              quality: label,
+              url,
+              default: isDefault
+            });
+          }
+        });
+
+        if (list.length < 1) {
+          alert('Minimal isi 1 quality.');
+          return;
+        }
+
+        payload = JSON.stringify(list);
+      }
+
+      const finalLink = `${getBaseUrl()}?t=${encodeURIComponent(type)}&f=${encodeURIComponent(enc(payload))}`;
+      qs('#finalUrl').value = finalLink;
+      qs('#resultArea').classList.remove('hidden');
+    }
+
+    function copyToClipboard() {
+      navigator.clipboard.writeText(qs('#finalUrl').value)
+        .then(() => alert('Link berhasil disalin.'))
+        .catch(() => alert('Gagal copy link.'));
+    }
+
+    function openPlayer() {
+      const url = qs('#finalUrl').value;
+      if (!url) return;
+      location.href = url;
+    }
+
+    function setupPlayer() {
+      const params = new URLSearchParams(location.search);
+      const type = params.get('t');
+      const f = params.get('f');
+
+      if (!type || !f) {
+        return;
+      }
+
+      qs('#generator').classList.add('hidden');
+      qs('#playerMode').classList.remove('hidden');
+
+      let decodedPayload;
+      try {
+        decodedPayload = dec(decodeURIComponent(f));
+      } catch (err) {
+        alert('Payload video tidak valid.');
+        return;
+      }
+
+      let finalSource = decodedPayload;
+      let qualityList = null;
+
+      try {
+        const parsed = JSON.parse(decodedPayload);
+        if (Array.isArray(parsed)) {
+          qualityList = parsed;
+          finalSource = parsed.find(x => x.default)?.url || parsed[0]?.url || '';
+        }
+      } catch (err) {
+        // payload bukan JSON, berarti single source biasa
+      }
+
+      if (!finalSource) {
+        alert('Source video tidak ditemukan.');
+        return;
+      }
+
+      const option = {
+        container: '.artplayer-app',
+        url: finalSource,
+        autoplay: false,
+        fullscreen: true,
+        fullscreenWeb: true,
+        autoSize: true,
+        setting: true,
+        controls: [
+          {
+            position: 'right',
+            html: 'Reload',
+            click: () => location.reload()
+          }
+        ],
+        customType: {}
+      };
+
+      if (qualityList && Array.isArray(qualityList) && qualityList.length > 0) {
+        option.quality = qualityList.map(item => ({
+          default: !!item.default,
+          html: item.quality,
+          url: item.url
+        }));
+      }
+
+      if (type === 'hls') {
+        option.type = 'm3u8';
+        option.customType.m3u8 = function (video, url) {
+          if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(video);
+          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = url;
+          } else {
+            alert('Browser tidak mendukung HLS.');
+          }
+        };
+      }
+
+      if (type === 'dash') {
+        option.type = 'mpd';
+        option.customType.mpd = function (video, url) {
+          dashjs.MediaPlayer().create().initialize(video, url, false);
+        };
+      }
+
+      if (type === 'flv') {
+        option.type = 'flv';
+        option.customType.flv = function (video, url) {
+          if (flvjs.isSupported()) {
+            const player = flvjs.createPlayer({ type: 'flv', url });
+            player.attachMediaElement(video);
+            player.load();
+          } else {
+            alert('Browser tidak mendukung FLV.');
+          }
+        };
+      }
+
+      if (type === 'mpegts') {
+        option.type = 'mpegts';
+        option.customType.mpegts = function (video, url) {
+          if (window.mpegts && mpegts.getFeatureList().mseLivePlayback) {
+            const player = mpegts.createPlayer({ type: 'mpegts', url });
+            player.attachMediaElement(video);
+            player.load();
+          } else {
+            alert('Browser tidak mendukung MPEG-TS.');
+          }
+        };
+      }
+
+      if (type === 'mp4') {
+        option.type = 'mp4';
+      }
+
+      const art = new Artplayer(option);
+
+      /* =========================
+         TEMPAT IKLAN 4: HOOK IKLAN SAAT PLAY / KLIK
+         Di sini kamu bisa panggil fungsi/script popup iklan milikmu.
+         Jangan auto window.open tanpa user interaction, biasanya diblok browser.
+
+         Contoh:
+         art.on('play', () => {
+           // triggerAdPopup();
+         });
+         ========================= */
+      art.on('play', () => {
+        // triggerAdPopup();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      qs('#baseUrl').value = getBaseUrl();
+
+      qsa('input[name="sourceMode"]').forEach(el => {
+        el.addEventListener('change', toggleInputs);
+      });
+
+      qs('#addQualityBtn').addEventListener('click', () => addQualityRow());
+      qs('#generateBtn').addEventListener('click', generateLink);
+      qs('#copyBtn').addEventListener('click', copyToClipboard);
+      qs('#openBtn').addEventListener('click', openPlayer);
+
+      toggleInputs();
+      setupPlayer();
+    });
+  </script>
+</body>
+</html>
